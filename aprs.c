@@ -2175,7 +2175,7 @@ int main(int argc, char **argv)
                 fake_gps_data(&state);
 
         if (state.conf.tnc && STREQ(state.conf.tnc_type, "KISS")) {
-                state.tncfd = serial_open(state.conf.tnc, state.conf.tnc_rate, 1);
+                state.tncfd = serial_open(state.conf.tnc, state.conf.tnc_rate, 0);
                 if (state.tncfd < 0) {
                         printf("Failed to open TNC: %m\n");
                         exit(1);
