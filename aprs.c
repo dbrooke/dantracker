@@ -60,6 +60,7 @@ struct state {
         struct {
                 char *tnc;
                 int tnc_rate;
+                int tnc_hflow;
                 char *gps;
                 int gps_rate;
                 char *tel;
@@ -2008,6 +2009,7 @@ int parse_ini(char *filename, struct state *state)
                 state->conf.tnc = iniparser_getstring(ini, "tnc:port", NULL);
         state->conf.tnc_rate = iniparser_getint(ini, "tnc:rate", 9600);
         state->conf.tnc_type = iniparser_getstring(ini, "tnc:type", "KISS");
+        state->conf.tnc_hflow = iniparser_getboolean(ini, "tnc:hflow", 1);
 
         tmp = iniparser_getstring(ini, "tnc:init_kiss_cmd", "");
         state->conf.init_kiss_cmd = process_tnc_cmd(tmp);
@@ -2175,7 +2177,7 @@ int main(int argc, char **argv)
                 fake_gps_data(&state);
 
         if (state.conf.tnc && STREQ(state.conf.tnc_type, "KISS")) {
-                state.tncfd = serial_open(state.conf.tnc, state.conf.tnc_rate, 0);
+                state.tncfd = serial_open(state.conf.tnc, state.conf.tnc_rate, state.conf.tnc_hflow);
                 if (state.tncfd < 0) {
                         printf("Failed to open TNC: %m\n");
                         exit(1);
