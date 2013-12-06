@@ -28,3 +28,5 @@ Build dantracker with "make".
 Stress-test by using examples/aprstest.ini (modified as appropriate), which
 will attempt to eat the entire APRS-IS world feed without crashing.
 
+Ordnance Survey OSTN02 conversion code from http://aa.net.uk/kb-other-free.html
+
