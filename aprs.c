@@ -29,6 +29,7 @@
 #include "serial.h"
 #include "nmea.h"
 #include "aprs-is.h"
+#include "ostn02.h"
 
 #ifndef BUILD
 #define BUILD 0
@@ -223,6 +224,42 @@ fap_packet_t *dan_parseaprs(char *string, int len, int isax25)
         }
 
         return fap;
+}
+
+char *format_osgb(double lat, double lon)
+{
+	long double eastingp, northingp, altp;
+	int e100k, n100k, easting, northing, l1, l2;
+	char c1, c2;
+	static char str[18];
+
+	/* transform from WGS84 lat/lon to OSGB36 easting/northing */
+	OSTN02_LL2EN(lat, lon, &eastingp, &northingp, &altp);
+
+	/* extract initial (100k square) numbers */
+	e100k = floor(eastingp / 100000);
+	n100k = floor(northingp / 100000);
+
+	/* remove initial (100k square) numbers */
+	easting = eastingp - floor(e100k * 100000);
+	northing = northingp - floor(n100k * 100000);
+
+	l1 = (19 - n100k) - (19 - n100k) % 5 + floor((e100k + 10) / 5);
+	l2 = (19 - n100k) * 5 % 25 + e100k % 5;
+
+	/* adjust indices for missing 'I' */
+	if (l1 > 7)
+		l1++;
+	if (l2 > 7)
+		l2++;
+
+	/* map numbers to letters */
+	c1 = l1 + 'A';
+	c2 = l2 + 'A';
+
+	snprintf(str, sizeof(str), "%c%c %05d %05d", c1, c2, easting, northing);
+
+	return str;
 }
 
 char *format_time(time_t t)
@@ -1057,6 +1094,8 @@ int display_gps_info(struct state *state)
                 status,
                 mypos->sats);
         _ui_send(state, "G_LATLON", buf);
+
+        _ui_send(state, "G_OSGB", format_osgb(mypos->lat, mypos->lon));
 
         if (mypos->speed > 1.0)
                 sprintf(buf, "%s %2s, Alt %s",

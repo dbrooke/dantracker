@@ -147,6 +147,7 @@ struct element_layout gps_info_elements[] = {
         {"G_LATLON",                WX(0), WY(250)},
 
         {"G_SPD",                WX(0), WY(280)},
+        {"G_OSGB",               WX(370), WY(280)},
 
         {"G_MYCALL",                WX(0),   WY(310)},
         {"G_LASTBEACON",        WX(170), WY(310)},
@@ -520,6 +521,7 @@ int make_gps_info(struct layout *l)
 {
         make_text_label(l, "G_LATLON",  "", "Sans 18");
         make_text_label(l, "G_SPD",     "", "Sans 20");
+        make_text_label(l, "G_OSGB",    "", "Sans 20");
 
         make_text_label(l, "G_MYCALL",  "", "Sans 20");
         make_text_label(l, "G_LASTBEACON",  "", "Sans 20");

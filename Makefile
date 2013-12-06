@@ -12,11 +12,13 @@ uiclient.o: uiclient.c ui.h
 serial.o: serial.c serial.h
 nmea.o: nmea.c nmea.h
 aprs-is.o: aprs-is.c aprs-is.h
+ostn02.o: ostn02.c OSTN02_OSGM02_GB.h
+OSTN02_OSGM02_GB.o: OSTN02_OSGM02_GB.c OSTN02_OSGM02_GB.h
 
-aprs: aprs.c uiclient.o serial.o nmea.o aprs-is.o
+aprs: aprs.c uiclient.o serial.o nmea.o aprs-is.o ostn02.o OSTN02_OSGM02_GB.o ostn02.h
 	test -d .hg && hg id --id > .revision || true
 	echo $$((`cat .build` + 1)) > .build
-	$(CC) $(CFLAGS) $(APRS_CFLAGS) -o $@ $^ -DBUILD=`cat .build` -DREVISION=\"`cat .revision`\" -lfap -liniparser
+	$(CC) $(CFLAGS) $(APRS_CFLAGS) -o $@ $^ -DBUILD=`cat .build` -DREVISION=\"`cat .revision`\" -lfap -liniparser -lm
 
 ui: ui.c uiclient.o
 	$(CC) $(CFLAGS) $(GTK_CFLAGS) $(GLIB_CFLAGS) $^ -o $@ $(GTK_LIBS) $(GLIB_LIBS)
